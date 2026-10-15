@@ -1,0 +1,256 @@
+# =============================================================================
+# 2027 智能搬运赛项 —— Git 忽略规则
+# -----------------------------------------------------------------------------
+# 原则：编译产物、IDE 个人配置、本机缓存一律不入库；
+#       但"能复现构建的东西"（源码、配置、脚本、BOM）必须入库。
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1. 编译与构建产物（通用）
+# -----------------------------------------------------------------------------
+build/
+Build/
+out/
+output/
+bin/
+obj/
+*.o
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+*.su
+*.i
+*.s
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+!docs/**/Makefile
+compile_commands.json
+.ninja_deps
+.ninja_log
+build.ninja
+
+# -----------------------------------------------------------------------------
+# 2. 嵌入式 / PlatformIO / STM32
+# -----------------------------------------------------------------------------
+.pio/
+.pioenvs/
+.piolibdeps/
+platformio.sconsign/
+.vscode/.browse.c_cpp.db*
+Debug/
+Release/
+*.uvguix.*
+*.uvoptx
+*.uvprojx
+*.scvd
+JLinkLog.txt
+JLinkSettings.ini
+*.axf
+*.crf
+*.dep
+*.lnp
+*.htm
+*.bak
+*.ddk
+*.edk
+*.lst
+*.omf
+*.plg
+*.tmp
+*.sct
+*.build_log.htm
+*.iex
+*.Administrator/
+MDK-ARM/*/
+!MDK-ARM/*.uvprojx
+
+# -----------------------------------------------------------------------------
+# 3. Python
+# -----------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+.python-version
+*.egg-info/
+.eggs/
+dist/
+build/
+pip-wheel-metadata/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+.hypothesis/
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# -----------------------------------------------------------------------------
+# 4. C/C++ IDE 与编辑器（个人配置不入库）
+# -----------------------------------------------------------------------------
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea/
+*.iml
+*.ipr
+*.iws
+.cproject
+.project
+.settings/
+*.sublime-workspace
+*.sublime-project
+.vs/
+*.VC.db
+*.VC.VC.opendb
+.cache/
+.clangd/
+compile_flags.txt
+
+# -----------------------------------------------------------------------------
+# 5. 操作系统
+# -----------------------------------------------------------------------------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+*~
+*.swp
+*.swo
+*.lock
+!package-lock.json
+!pnpm-lock.yaml
+
+# -----------------------------------------------------------------------------
+# 6. ROS / 机器人中间件
+#     （.bag 走 LFS，见 .gitattributes；这里忽略本地运行残留）
+# -----------------------------------------------------------------------------
+devel/
+logs/
+log/
+*.log
+.ros/
+rosbag/
+catkin_ws/build/
+catkin_ws/devel/
+install/
+colcon_logs/
+
+# -----------------------------------------------------------------------------
+# 7. CAD 软件的本地临时文件与自动备份
+#     （正式模型走 LFS，见 .gitattributes）
+# -----------------------------------------------------------------------------
+*.sldprt~
+*.sldasm~
+*.SLDPRT~
+*.SLDASM~
+*.swp
+*.lck
+~$*.SLDPRT
+~$*.SLDASM
+*.bak.*
+*.autosave
+SolidWorks 临时文件/
+*.3dxml.jnl
+*.jt
+*.edrawings
+*.easm
+*.eprt
+*.edrw
+
+# -----------------------------------------------------------------------------
+# 8. 数据集与模型权重
+#     数据集体积大且常为第三方版权，不入库；模型权重走 LFS。
+#     需要共享数据集时用外部网盘 + 在 docs 中记录下载地址与校验和。
+# -----------------------------------------------------------------------------
+vision/dataset/raw/**
+vision/dataset/processed/**
+!vision/dataset/README.md
+!vision/dataset/.gitkeep
+vision/models/*.onnx
+vision/models/*.pt
+vision/models/*.pth
+vision/models/*.weights
+vision/models/*.engine
+vision/models/*.blob
+!vision/models/README.md
+runs/
+wandb/
+lightning_logs/
+*.ckpt
+
+# -----------------------------------------------------------------------------
+# 9. 硬件设计软件的临时文件
+#     （立创EDA / 嘉立创 的工程文件走 LFS，见 .gitattributes）
+# -----------------------------------------------------------------------------
+*_bak.epro
+*.epro.bak
+*.epcb.bak
+Gerber_Output/
+gerber_output/
+*.gbrjob
+
+# -----------------------------------------------------------------------------
+# 10. 凭据与私密信息 —— 绝对不许入库
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+secrets/
+secrets.*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+credentials.json
+token.json
+*.token
+wifi_config.h
+secrets.h
+
+# -----------------------------------------------------------------------------
+# 11. 竞赛提交物：匿名版由脚本生成，不手工维护
+#     注意 release/submission 下只保留"最终冻结的匿名版"，
+#     中间产物不入库，避免误提交带姓名的版本。
+# -----------------------------------------------------------------------------
+release/submission/_tmp/
+release/submission/_export/
+release/submission/*.bak
+
+# -----------------------------------------------------------------------------
+# 12. 其他
+# -----------------------------------------------------------------------------
+*.pdf.tmp
+*.part
+*.crdownload
+*.download
+node_modules/
+package-lock.json

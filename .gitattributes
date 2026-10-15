@@ -1,0 +1,145 @@
+# =============================================================================
+# 2027 智能搬运赛项 —— Git LFS 规则
+# -----------------------------------------------------------------------------
+# 重要：CAD / PCB / 模型 / 视频 等二进制大文件必须走 Git LFS。
+#   如果直接提交进普通 git 历史，仓库会迅速膨胀到数 GB，
+#   clone 一次要十分钟，队友会开始抗拒用 Git，整套协作就废了。
+#
+# 【首次使用前，每个人都要在本机执行一次】
+#     git lfs install
+#
+# 安装 Git LFS：https://git-lfs.com   或   winget install GitHub.GitLFS
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1. 三维模型 / CAD
+#    注意：.step / .stp / .iges 是文本格式，但体积大、diff 无意义，同样走 LFS。
+# -----------------------------------------------------------------------------
+*.SLDPRT  filter=lfs diff=lfs merge=lfs -text
+*.SLDASM  filter=lfs diff=lfs merge=lfs -text
+*.SLDDRW  filter=lfs diff=lfs merge=lfs -text
+*.sldprt  filter=lfs diff=lfs merge=lfs -text
+*.sldasm  filter=lfs diff=lfs merge=lfs -text
+*.slddrw  filter=lfs diff=lfs merge=lfs -text
+*.step    filter=lfs diff=lfs merge=lfs -text
+*.STEP    filter=lfs diff=lfs merge=lfs -text
+*.stp     filter=lfs diff=lfs merge=lfs -text
+*.iges    filter=lfs diff=lfs merge=lfs -text
+*.igs     filter=lfs diff=lfs merge=lfs -text
+*.x_t     filter=lfs diff=lfs merge=lfs -text
+*.f3d     filter=lfs diff=lfs merge=lfs -text
+*.f3z     filter=lfs diff=lfs merge=lfs -text
+*.prt     filter=lfs diff=lfs merge=lfs -text
+*.asm     filter=lfs diff=lfs merge=lfs -text
+*.CATPart filter=lfs diff=lfs merge=lfs -text
+*.CATProduct filter=lfs diff=lfs merge=lfs -text
+*.3dm     filter=lfs diff=lfs merge=lfs -text
+*.blend   filter=lfs diff=lfs merge=lfs -text
+
+# -----------------------------------------------------------------------------
+# 2. 3D 打印 / 切片
+# -----------------------------------------------------------------------------
+*.stl     filter=lfs diff=lfs merge=lfs -text
+*.STL     filter=lfs diff=lfs merge=lfs -text
+*.3mf     filter=lfs diff=lfs merge=lfs -text
+*.obj     filter=lfs diff=lfs merge=lfs -text
+*.gcode   filter=lfs diff=lfs merge=lfs -text
+*.bgcode  filter=lfs diff=lfs merge=lfs -text
+
+# -----------------------------------------------------------------------------
+# 3. 电路 / PCB
+# -----------------------------------------------------------------------------
+*.epro    filter=lfs diff=lfs merge=lfs -text
+*.epcb    filter=lfs diff=lfs merge=lfs -text
+*.esch    filter=lfs diff=lfs merge=lfs -text
+*.efoo    filter=lfs diff=lfs merge=lfs -text
+*.SchDoc  filter=lfs diff=lfs merge=lfs -text
+*.PcbDoc  filter=lfs diff=lfs merge=lfs -text
+*.PrjPcb  filter=lfs diff=lfs merge=lfs -text
+*.kicad_pcb filter=lfs diff=lfs merge=lfs -text
+*.kicad_sch filter=lfs diff=lfs merge=lfs -text
+*.brd     filter=lfs diff=lfs merge=lfs -text
+*.sch     filter=lfs diff=lfs merge=lfs -text
+*.gerber  filter=lfs diff=lfs merge=lfs -text
+
+# -----------------------------------------------------------------------------
+# 4. 机器学习模型权重
+#    （数据集本身建议不要进本仓库，见 docs/20-技术方案/视觉方案.md）
+# -----------------------------------------------------------------------------
+*.onnx    filter=lfs diff=lfs merge=lfs -text
+*.pt      filter=lfs diff=lfs merge=lfs -text
+*.pth     filter=lfs diff=lfs merge=lfs -text
+*.weights filter=lfs diff=lfs merge=lfs -text
+*.h5      filter=lfs diff=lfs merge=lfs -text
+*.tflite  filter=lfs diff=lfs merge=lfs -text
+*.engine  filter=lfs diff=lfs merge=lfs -text
+*.blob    filter=lfs diff=lfs merge=lfs -text
+
+# -----------------------------------------------------------------------------
+# 5. 视频 / 音频 / 大图（答辩素材、实验录像）
+# -----------------------------------------------------------------------------
+*.mp4     filter=lfs diff=lfs merge=lfs -text
+*.MP4     filter=lfs diff=lfs merge=lfs -text
+*.mov     filter=lfs diff=lfs merge=lfs -text
+*.avi     filter=lfs diff=lfs merge=lfs -text
+*.mkv     filter=lfs diff=lfs merge=lfs -text
+*.wav     filter=lfs diff=lfs merge=lfs -text
+
+# -----------------------------------------------------------------------------
+# 6. ROS 录制包 / 点云（体积很大，务必走 LFS）
+# -----------------------------------------------------------------------------
+*.bag     filter=lfs diff=lfs merge=lfs -text
+*.pcd     filter=lfs diff=lfs merge=lfs -text
+*.ply     filter=lfs diff=lfs merge=lfs -text
+*.db3     filter=lfs diff=lfs merge=lfs -text
+
+# -----------------------------------------------------------------------------
+# 7. 压缩包 / 离线安装包
+# -----------------------------------------------------------------------------
+*.zip     filter=lfs diff=lfs merge=lfs -text
+*.7z      filter=lfs diff=lfs merge=lfs -text
+*.rar     filter=lfs diff=lfs merge=lfs -text
+*.tar.gz  filter=lfs diff=lfs merge=lfs -text
+
+# -----------------------------------------------------------------------------
+# 8. Office 文档（技术报告、答辩 PPT —— 版本对比意义有限，但需要留存历史）
+# -----------------------------------------------------------------------------
+*.docx    filter=lfs diff=lfs merge=lfs -text
+*.xlsx    filter=lfs diff=lfs merge=lfs -text
+*.pptx    filter=lfs diff=lfs merge=lfs -text
+*.pdf     filter=lfs diff=lfs merge=lfs -text
+
+# -----------------------------------------------------------------------------
+# 9. 换行符规范：这些是文本文件，强制 LF 入库
+#    （Windows 队友用 CRLF 检出，避免整个文件被误判为全部修改）
+# -----------------------------------------------------------------------------
+*.md      text eol=lf
+*.txt     text eol=lf
+*.c       text eol=lf
+*.h       text eol=lf
+*.cpp     text eol=lf
+*.hpp     text eol=lf
+*.py      text eol=lf
+*.json    text eol=lf
+*.yml     text eol=lf
+*.yaml    text eol=lf
+*.csv     text eol=lf
+*.bat     text eol=crlf
+*.ps1     text eol=crlf
+
+# -----------------------------------------------------------------------------
+# 10. PDF 在 GitHub 上按二进制处理，不生成文本 diff
+# -----------------------------------------------------------------------------
+*.pdf     -diff
+
+# -----------------------------------------------------------------------------
+# 11. 禁止 git 自动转换二进制文件
+# -----------------------------------------------------------------------------
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.ico     binary
+*.woff    binary
+*.woff2   binary
+*.ttf     binary
