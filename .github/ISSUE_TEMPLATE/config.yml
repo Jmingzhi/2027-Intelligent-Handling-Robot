@@ -1,14 +1,19 @@
 blank_issues_enabled: true
+# -----------------------------------------------------------------------------
+# 说明：contact_links 的 url 必须是完整的 http(s) 地址，不能用仓库内相对路径。
+# 推送后请把 OWNER/REPO 替换为真实仓库地址，例如：
+#   https://github.com/yourname/2027-Intelligent-Handling-Robot/blob/develop/仓库管理手册.md
+# -----------------------------------------------------------------------------
 contact_links:
-  - name: 📖 仓库管理手册（先看这个）
-    url: https://github.com/
+  - name: 仓库管理手册（新人先看这个）
+    url: https://github.com/OWNER/REPO/blob/develop/仓库管理手册.md
     about: 不知道怎么用 Git、怎么加文件、怎么提交？先读根目录的《仓库管理手册.md》
-  - name: 📋 规则解读
-    url: https://github.com/
+  - name: 规则解读
+    url: https://github.com/OWNER/REPO/blob/develop/docs/00-规则与命题/规则解读.md
     about: 赛项规则的结构化解读，含全部硬性约束与计分细则
-  - name: ✅ 合规检查表
-    url: https://github.com/
+  - name: 合规检查表
+    url: https://github.com/OWNER/REPO/blob/develop/docs/00-规则与命题/合规检查表.md
     about: 采购前、装配后、提交前必查。违反红线会取消资格或判 0 分
-  - name: 🤝 协作规范
-    url: https://github.com/
+  - name: 协作规范
+    url: https://github.com/OWNER/REPO/blob/develop/CONTRIBUTING.md
     about: 分支策略、提交规范、PR 流程、接口变更流程
