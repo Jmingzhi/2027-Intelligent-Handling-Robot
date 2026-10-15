@@ -1,0 +1,114 @@
+name: Lint Docs
+
+# 文档规范检查：占位符、空文件、站内相对链接。
+# 全部步骤均为“只告警不失败”，未编写完成的文档不会阻塞流水线。
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-docs:
+    name: Markdown 文档检查（仅告警）
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 检查未替换的占位符标记
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+
+          mapfile -t md_files < <(find . -type f -name '*.md' -not -path './.git/*' | sort)
+
+          if [ "${#md_files[@]}" -eq 0 ]; then
+            echo "::notice::仓库中暂无 Markdown 文件，跳过占位符检查。"
+            exit 0
+          fi
+
+          # 尚未替换的占位符：待填 / TBD / XXX / FIXME
+          pattern='待填|TBD|XXX|FIXME'
+          hits=0
+
+          for f in "${md_files[@]}"; do
+            while IFS=: read -r lineno text; do
+              [ -z "${lineno:-}" ] && continue
+              hits=$((hits + 1))
+              echo "::warning file=${f#./},line=${lineno}::发现未替换的占位符标记：${text}"
+            done < <(grep -nE "$pattern" "$f" 2>/dev/null || true)
+          done
+
+          echo "已扫描 ${#md_files[@]} 个 Markdown 文件，命中占位符 ${hits} 处。"
+          exit 0
+
+      - name: 检查 docs/ 下的空文件
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+
+          if [ ! -d docs ]; then
+            echo "::notice::docs/ 目录尚不存在，跳过空文件检查。"
+            exit 0
+          fi
+
+          mapfile -t empty_files < <(find docs -type f -size 0 | sort)
+
+          if [ "${#empty_files[@]}" -eq 0 ]; then
+            echo "docs/ 下未发现 0 字节文件。"
+            exit 0
+          fi
+
+          for f in "${empty_files[@]}"; do
+            echo "::warning file=${f}::该文件为空（0 字节），请补充内容或删除。"
+          done
+          echo "docs/ 下共发现 ${#empty_files[@]} 个空文件。"
+          exit 0
+
+      - name: 检查 Markdown 站内相对链接
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+
+          # 仅校验指向仓库内 .md 文件的相对链接，外链与锚点一律跳过。
+          broken=0
+          checked=0
+
+          while IFS= read -r f; do
+            dir=$(dirname "$f")
+            while IFS=: read -r lineno raw; do
+              [ -z "${raw:-}" ] && continue
+              # raw 形如 ](相对路径.md) 或 ](路径.md#锚点)
+              target=${raw#](}
+              target=${target%)}
+              target=${target%%#*}
+              target=${target%%\?*}
+              target=${target#<}
+              target=${target%>}
+              [ -z "$target" ] && continue
+              case "$target" in
+                http://*|https://*|mailto:*|tel:*|/*) continue ;;
+              esac
+              case "$target" in
+                *.md) ;;
+                *) continue ;;
+              esac
+              checked=$((checked + 1))
+              if [ ! -e "$dir/$target" ]; then
+                broken=$((broken + 1))
+                echo "::warning file=${f#./},line=${lineno}::相对链接失效：${target}"
+              fi
+            done < <(grep -noE '\]\([^()]*\.md[^()]*\)' "$f" 2>/dev/null || true)
+          done < <(find . -type f -name '*.md' -not -path './.git/*' | sort)
+
+          echo "已校验站内 Markdown 相对链接 ${checked} 条，失效 ${broken} 条。"
+          exit 0

@@ -1,0 +1,134 @@
+---
+name: 技术决策 (Decision / ADR)
+description: 提出一项需要团队拍板的技术决策
+title: "[DECISION] "
+labels: ["decision"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 为什么需要这个模板
+        > 三人队最容易犯的错误是**同一个问题反复讨论、反复推翻**。
+        > 每次讨论"用ROS还是裸机""用折叠臂还是固定臂"，两周后没人记得当初为什么这么定。
+        > **决策一旦做出，就写进 `docs/50-决策记录/`，不再重复讨论。**
+
+  - type: input
+    id: title
+    attributes:
+      label: 决策标题
+      description: 一句话概括要决定什么
+      placeholder: 例如：采用折叠臂还是固定臂构型
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 决策类别
+      options:
+        - 系统架构
+        - 机械构型
+        - 电控方案
+        - 视觉方案
+        - 算法方案
+        - 材料与加工
+        - 流程与工具
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 背景
+      description: 为什么要做这个决策？受什么规则或约束驱动？
+      placeholder: |
+        规则规定机器人折叠态铅垂投影 ≤300×300mm、高 ≤400mm，但原料区转盘直径 φ300mm、
+        圆环区距车道边缘有一定距离——固定臂无法同时满足尺寸限制和臂展需求。
+    validations:
+      required: true
+
+  - type: textarea
+    id: options
+    attributes:
+      label: 备选方案对比
+      description: 至少列出 2 个方案。用表格对比
+      value: |
+        | 方案 | 优点 | 缺点 | 合规性 | 实现难度 |
+        |---|---|---|---|---|
+        | 方案A： | | | | |
+        | 方案B： | | | | |
+        | 方案C： | | | | |
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建议方案
+      description: 提议选哪个，为什么
+    validations:
+      required: true
+
+  - type: textarea
+    id: consequences
+    attributes:
+      label: 后果分析
+      description: 选定后会产生什么正面影响、负面影响、新增风险
+      value: |
+        **正面影响：**
+        -
+        **负面影响：**
+        -
+        **新增风险：**
+        -
+    validations:
+      required: true
+
+  - type: textarea
+    id: interfaces
+    attributes:
+      label: 影响的接口与文档
+      value: |
+        - [ ] 机械接口
+        - [ ] 电气接口
+        - [ ] 通信协议
+        - [ ] 坐标约定
+        - [ ] 需更新文档：docs/10-接口契约/……
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reversibility
+    attributes:
+      label: 可逆性
+      description: 这个决策后期改动的代价有多大
+      options:
+        - 易改（改参数/配置即可）
+        - 中等（需局部改动，1-2 周）
+        - 难改（涉及结构重做或架构重构）
+        - 几乎不可逆（涉及已加工件或大量已投入工作）
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: 决策截止日期
+      description: 不能无限期讨论
+      placeholder: 2027-02-28
+    validations:
+      required: true
+
+  - type: textarea
+    id: resolution
+    attributes:
+      label: 决议（讨论后填写）
+      description: 最终决定了什么、谁拍的板、何时
+      value: |
+        - **决定：**
+        - **决策人：**
+        - **日期：**
+        - **对应的 ADR 文档：** docs/50-决策记录/ADR-XXXX-…….md
+    validations:
+      required: false

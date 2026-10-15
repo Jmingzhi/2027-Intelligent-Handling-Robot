@@ -1,0 +1,79 @@
+name: CI Python
+
+# Python 代码质量：仅在 vision/ algorithm/ tools/ embedded/ 下存在 .py 文件时运行。
+# 尚无 Python 代码时输出 notice 并优雅退出 0；ruff 使用 --exit-zero，避免草稿代码直接卡红。
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-python-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Python 静态检查与单元测试
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 探测 Python 代码与测试用例
+        id: detect
+        run: |
+          set -uo pipefail
+
+          py_found=false
+          for d in vision algorithm tools embedded; do
+            if [ -d "$d" ] && [ -n "$(find "$d" -type f -name '*.py' -print -quit 2>/dev/null)" ]; then
+              py_found=true
+              echo "检测到 Python 代码目录：$d"
+            fi
+          done
+
+          tests_found=false
+          for d in tests test; do
+            if [ -d "$d" ] && [ -n "$(find "$d" -type f \( -name 'test_*.py' -o -name '*_test.py' \) -print -quit 2>/dev/null)" ]; then
+              tests_found=true
+            fi
+          done
+
+          echo "py=$py_found" >> "$GITHUB_OUTPUT"
+          echo "tests=$tests_found" >> "$GITHUB_OUTPUT"
+
+          if [ "$py_found" = false ]; then
+            echo "::notice::vision/ algorithm/ tools/ embedded/ 下暂无 .py 文件，跳过 Python CI。"
+          fi
+          if [ "$tests_found" = false ]; then
+            echo "::notice::tests/ 或 test/ 下暂无 pytest 用例，跳过单元测试。"
+          fi
+
+      - name: 安装 Python
+        if: steps.detect.outputs.py == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 安装 ruff 与 pytest
+        if: steps.detect.outputs.py == 'true'
+        run: python -m pip install --upgrade ruff pytest
+
+      - name: ruff 静态检查（仅告警，不判失败）
+        if: steps.detect.outputs.py == 'true'
+        run: |
+          ruff --version
+          ruff check . --exit-zero
+
+      - name: pytest 单元测试
+        if: steps.detect.outputs.py == 'true' && steps.detect.outputs.tests == 'true'
+        run: python -m pytest -q
+
+      - name: 无 Python 代码时的说明
+        if: steps.detect.outputs.py != 'true'
+        run: echo "::notice::本次未检测到 Python 代码，Python CI 已优雅跳过。"

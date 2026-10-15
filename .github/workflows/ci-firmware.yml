@@ -1,0 +1,80 @@
+name: CI Firmware
+
+# 固件构建：仅在 embedded/ 下存在 platformio.ini 或 CMakeLists.txt 时执行。
+# 方案未定型、目录为空或不存在时输出 notice 并优雅退出 0，不阻塞流水线。
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-firmware-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  firmware:
+    name: 固件编译（自动探测工程）
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 探测固件工程
+        id: detect
+        run: |
+          set -uo pipefail
+
+          pio_ini=""
+          cmake_lists=""
+
+          if [ -d embedded ]; then
+            pio_ini=$(find embedded -maxdepth 2 -type f -name 'platformio.ini' -print -quit 2>/dev/null || true)
+            cmake_lists=$(find embedded -maxdepth 2 -type f -name 'CMakeLists.txt' -print -quit 2>/dev/null || true)
+          fi
+
+          if [ -n "$pio_ini" ]; then
+            echo "pio=true" >> "$GITHUB_OUTPUT"
+            echo "pio_dir=$(dirname "$pio_ini")" >> "$GITHUB_OUTPUT"
+            echo "检测到 PlatformIO 工程：$pio_ini"
+          else
+            echo "pio=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::embedded/ 下未找到 platformio.ini，跳过 PlatformIO 编译。"
+          fi
+
+          if [ -n "$cmake_lists" ]; then
+            echo "cmake=true" >> "$GITHUB_OUTPUT"
+            echo "cmake_dir=$(dirname "$cmake_lists")" >> "$GITHUB_OUTPUT"
+            echo "检测到 CMake 工程：$cmake_lists"
+          else
+            echo "cmake=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::embedded/ 下未找到 CMakeLists.txt，跳过 CMake 编译。"
+          fi
+
+      - name: 安装 PlatformIO
+        if: steps.detect.outputs.pio == 'true'
+        run: python3 -m pip install --upgrade platformio
+
+      - name: PlatformIO 编译
+        if: steps.detect.outputs.pio == 'true'
+        run: pio run -d "${{ steps.detect.outputs.pio_dir }}"
+
+      - name: 安装 CMake 工具链
+        if: steps.detect.outputs.cmake == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq cmake ninja-build build-essential
+
+      - name: CMake 配置与编译
+        if: steps.detect.outputs.cmake == 'true'
+        run: |
+          cmake -S "${{ steps.detect.outputs.cmake_dir }}" -B build-cmake -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-cmake --parallel
+
+      - name: 无固件工程时的说明
+        if: steps.detect.outputs.pio != 'true' && steps.detect.outputs.cmake != 'true'
+        run: echo "::notice::embedded/ 下暂无固件工程（无 platformio.ini / CMakeLists.txt），本次编译步骤已跳过。"

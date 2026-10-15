@@ -1,0 +1,149 @@
+---
+name: 缺陷报告 (Bug)
+description: 报告机器人、代码、结构或流程中的缺陷
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 提交前请先确认
+        - 已搜索过现有 Issue，没有重复
+        - 已尝试在最新代码/版本上复现
+
+        > ⚠️ 本赛项有"停止运行 15 秒本轮结束"等硬约束，**时序类问题请务必填写时序信息**。
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 问题描述
+      description: 一句话说清现象
+      placeholder: 例如：机器人从原料区移动到粗加工区时，转向后总是偏右约 30mm
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 问题类别
+      options:
+        - 机械 / 结构
+        - 电控 / 固件
+        - 视觉
+        - 算法 / 路径规划
+        - 装配 / 集成
+        - 通信协议
+        - 文档 / 流程
+        - 不确定
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现条件与步骤
+      description: 越具体越好。包含机器人状态、场地情况、任务码等
+      placeholder: |
+        1. 场地：自建 2400×2400 场地
+        2. 任务码：156+123+516+231
+        3. 操作：一键启动后，机器人完成读码，前往原料区
+        4. 现象：……
+    validations:
+      required: true
+
+  - type: input
+    id: frequency
+    attributes:
+      label: 复现频率
+      placeholder: 例如：10 次中出现 7 次 / 必现 / 偶发（约 1/20）
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望行为
+      placeholder: 应该……
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际行为
+      placeholder: 实际……
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 环境与版本信息
+      description: 请填写你能提供的信息。Git 提交号用 `git rev-parse --short HEAD` 获取
+      value: |
+        - Git 提交号：
+        - 固件版本：
+        - 视觉参数版本：
+        - 硬件改动：
+        - 电池电压：
+        - 场地/环境：
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 证据（日志 / 照片 / 视频）
+      description: ★强烈建议提供。日志、串口输出、照片、视频链接都可以直接粘贴或拖入
+      placeholder: |
+        粘贴日志片段：
+        ```
+        [  1250ms] [VISION] TARGET_QUERY color=1 -> (312, -85) conf=0.93
+        [  1890ms] [ARM] MOVE_POSE timeout
+        ```
+    validations:
+      required: false
+
+  - type: textarea
+    id: analysis
+    attributes:
+      label: 初步分析（可选）
+      description: 你怀疑的原因、已经尝试过的排查
+    validations:
+      required: false
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: 临时规避方法（可选）
+      description: 有没有能绕过去的办法
+    validations:
+      required: false
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 严重程度
+      options:
+        - 🔴 阻断 - 完全无法进行（如无法启动、必现崩溃）
+        - 🟠 严重 - 影响比赛得分（如抓取失败、越界）
+        - 🟡 一般 - 影响效率但不影响得分
+        - 🟢 轻微 - 体验问题、文档错误
+    validations:
+      required: true
+
+  - type: input
+    id: owner
+    attributes:
+      label: 期望负责人
+      placeholder: A / B / C
+    validations:
+      required: false
+
+  - type: input
+    id: deadline
+    attributes:
+      label: 期望解决日期
+      placeholder: 例如：2027-03-15
+    validations:
+      required: false

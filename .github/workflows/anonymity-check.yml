@@ -1,0 +1,52 @@
+name: Anonymity Check
+
+# 匿名性（去标识化）检查：竞赛规则规定任务命题文档中出现校名、姓名、队名、
+# 电话号码、邮箱及无关特殊符号者，该队文档成绩为 0 分。
+# release/submission 不存在或为空时脚本正常退出 0，流水线不会误报失败。
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: anonymity-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  anonymity:
+    name: 提交材料去标识化检查
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 打印生效词库
+        run: python3 tools/check_anonymity.py --list
+
+      - name: 严格检查 release/submission（缺失或为空时自动跳过）
+        run: |
+          set -uo pipefail
+          # 目录缺失或为空时脚本按空目录处理并正常退出 0，不会误报失败。
+          if [ ! -d release/submission ] || [ -z "$(find release/submission -type f -print -quit 2>/dev/null)" ]; then
+            echo "::notice::release/submission 不存在或为空，check_anonymity 将按空目录处理并正常退出。"
+          fi
+          python3 tools/check_anonymity.py --path release/submission --strict
+
+      - name: 检查 docs/00-规则与命题（仅报告，不判失败）
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          if [ ! -d "docs/00-规则与命题" ]; then
+            echo "::notice::docs/00-规则与命题 不存在，check_anonymity 将按空目录处理并正常退出。"
+          fi
+          python3 tools/check_anonymity.py --path "docs/00-规则与命题"

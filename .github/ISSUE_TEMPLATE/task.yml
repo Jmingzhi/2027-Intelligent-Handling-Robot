@@ -1,0 +1,123 @@
+---
+name: 任务 (Task)
+description: 一项需要完成的具体工作
+title: "[TASK] "
+labels: ["task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 填写提示
+        > ⚠️ **"验收标准"是必填项。** 写"完成视觉方案"没有意义，
+        > 要写"视觉方案文档包含相机选型、标定流程、识别算法、精度实测数据，并通过 A 评审"。
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: 任务目标
+      description: 一句话说清要达成什么
+      placeholder: 例如：完成抓手 V2 的详细设计并出工程图
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 任务类别
+      options:
+        - 机械 / 结构设计
+        - 加工 / 采购
+        - 电控 / 固件
+        - 视觉
+        - 算法
+        - 装配 / 集成
+        - 测试 / 验证
+        - 文档
+        - 项目管理
+    validations:
+      required: true
+
+  - type: dropdown
+    id: milestone
+    attributes:
+      label: 所属里程碑
+      description: 见 docs/60-项目管理/里程碑.md
+      options:
+        - 阶段0 准备与规则消化
+        - 阶段1 方案冻结
+        - 阶段2 单元跑通
+        - 阶段3 全流程跑通
+        - 阶段4 精度与节拍
+        - 阶段5 冻结与提交
+        - 不隶属特定阶段
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景与理由
+      description: 为什么需要做这件事？相关的规则条款或技术约束是什么？
+    validations:
+      required: false
+
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: 交付物
+      description: 具体产出什么文件/实物/代码
+      value: |
+        1.
+        2.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收标准 ★
+      description: 什么状态算完成？要可检验，不要含糊
+      placeholder: |
+        例如：
+        - [ ] 抓手 V2 装配体文件已提交到 hardware/cad/
+        - [ ] 重量 < 80g（实测）
+        - [ ] 折叠态包络 ≤300×300×400mm
+        - [ ] 全部零件已登记 BOM 与合规台账
+        - [ ] 已出工程图并提交到 hardware/drawings/
+    validations:
+      required: true
+
+  - type: textarea
+    id: interfaces
+    attributes:
+      label: 是否影响接口
+      description: 若影响机械/电气/通信/坐标接口，请说明需同步更新哪些文档
+      value: |
+        - [ ] 不影响接口
+        - [ ] 影响接口，需更新：docs/10-接口契约/……
+    validations:
+      required: true
+
+  - type: input
+    id: owner
+    attributes:
+      label: 负责人
+      placeholder: A / B / C
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: 截止日期
+      placeholder: 例如：2027-03-15
+    validations:
+      required: true
+
+  - type: textarea
+    id: blockers
+    attributes:
+      label: 依赖与阻塞
+      description: 需要别人先完成什么？需要什么资源？
+    validations:
+      required: false

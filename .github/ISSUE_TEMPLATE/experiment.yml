@@ -1,0 +1,161 @@
+---
+name: 实验记录 (Experiment)
+description: 记录一次实验。规则要求"所有实验必须留下记录"
+title: "[实验] "
+labels: ["experiment"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 说明
+        > 规则要求「所有实验必须留下记录」。
+        > **原始数据比结论重要** —— 结论会变，原始数据不会。
+        > 完整实验记录请同时存档到 `docs/30-实验记录/YYYYMMDD-主题.md`，本 Issue 作为索引与讨论处。
+
+  - type: input
+    id: date
+    attributes:
+      label: 实验日期
+      placeholder: 2027-03-15
+    validations:
+      required: true
+
+  - type: input
+    id: participants
+    attributes:
+      label: 参与人
+      placeholder: A、B
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 实验类别
+      options:
+        - 转盘抓取
+        - 落点精度
+        - 颜色识别
+        - 二维码识别
+        - 圆环定位
+        - 路径与节拍
+        - 码垛
+        - 结构强度 / 振动
+        - 电源 / 续航
+        - 通信
+        - 整机全流程
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: purpose
+    attributes:
+      label: 实验目的
+      description: 想验证什么？预期是什么？
+      placeholder: 例如：验证转盘在 8 秒/圈转速下的抓取成功率，预期 >80%
+    validations:
+      required: true
+
+  - type: textarea
+    id: conditions
+    attributes:
+      label: 实验条件
+      description: 可复现的关键条件
+      value: |
+        - Git 提交号：
+        - 固件版本：
+        - 视觉参数版本：
+        - 硬件状态（机械改动）：
+        - 场地：
+        - 环境光/照明：
+        - 电池电压：
+        - 样品/物料：
+    validations:
+      required: true
+
+  - type: textarea
+    id: method
+    attributes:
+      label: 实验方法
+      description: 步骤、样本量、测量方式
+      placeholder: |
+        1. 把物料随机放在转盘 3 个位置
+        2. 一键启动抓取流程
+        3. 记录是否抓取成功
+        4. 重复 20 次
+    validations:
+      required: true
+
+  - type: textarea
+    id: rawdata
+    attributes:
+      label: 原始数据 ★
+      description: 逐次记录，不要只写汇总。可直接粘贴表格或附件
+      placeholder: |
+        | 次数 | 目标颜色 | 是否成功 | 耗时(ms) | 备注 |
+        |---|---|---|---|---|
+        | 1 | 红 | 是 | 2340 | |
+        | 2 | 黑 | 否 | 3000 | 抓空 |
+      value: |
+        | 次数 | 结果 | 数据 | 备注 |
+        |---|---|---|---|
+        | 1 | | | |
+    validations:
+      required: true
+
+  - type: textarea
+    id: analysis
+    attributes:
+      label: 数据分析
+      description: 统计量、图表、异常点分析
+      placeholder: |
+        成功率 = 17/20 = 85%
+        平均耗时 = 2510 ms，标准差 = 320 ms
+        2 次失败均为"抓空"，发生在转盘转速偏快时
+    validations:
+      required: true
+
+  - type: textarea
+    id: conclusion
+    attributes:
+      label: 结论
+      placeholder: 在 8 秒/圈转速下抓取成功率 85%，达到预期。
+    validations:
+      required: true
+
+  - type: dropdown
+    id: changed
+    attributes:
+      label: 是否改变原有结论
+      options:
+        - 否，与原有认识一致
+        - 是，修正了原有认识
+        - 是，推翻了原有方案
+        - 首次实验，无可比结论
+    validations:
+      required: true
+
+  - type: textarea
+    id: problems
+    attributes:
+      label: 遇到的问题
+      description: 包括实验过程中的意外、设备故障、环境干扰
+    validations:
+      required: false
+
+  - type: textarea
+    id: next
+    attributes:
+      label: 下一步
+      placeholder: 需要改进什么？下一步做什么实验？
+    validations:
+      required: false
+
+  - type: input
+    id: doc
+    attributes:
+      label: 详细记录文件路径
+      placeholder: docs/30-实验记录/20270315-转盘抓取成功率.md
+    validations:
+      required: false
