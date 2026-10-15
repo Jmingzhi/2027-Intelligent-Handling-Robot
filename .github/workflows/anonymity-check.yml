@@ -42,11 +42,17 @@ jobs:
           fi
           python3 tools/check_anonymity.py --path release/submission --strict
 
-      - name: 检查 docs/00-规则与命题（仅报告，不判失败）
+      - name: 预检提交材料来源目录（仅报告，不判失败）
+        # release/submission 是最终提交物；docs/20-技术方案 是提交材料的写作来源。
+        # 两者都可能被改写为提交版，因此提前报告风险。此步骤仅提示，不阻断流水线。
         continue-on-error: true
         run: |
           set -uo pipefail
-          if [ ! -d "docs/00-规则与命题" ]; then
-            echo "::notice::docs/00-规则与命题 不存在，check_anonymity 将按空目录处理并正常退出。"
-          fi
-          python3 tools/check_anonymity.py --path "docs/00-规则与命题"
+          for d in "docs/20-技术方案" "docs/40-测试与验收"; do
+            if [ ! -d "$d" ]; then
+              echo "::notice::$d 不存在，跳过。"
+              continue
+            fi
+            echo "----- 预检 $d -----"
+            python3 tools/check_anonymity.py --path "$d"
+          done
